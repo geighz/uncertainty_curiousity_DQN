@@ -16,6 +16,7 @@ n_timesteps = 200_000_000
 # Multiprocessed RL Training
 start_time = time.time()
 model.learn(n_timesteps)
+
 total_time_multi = time.time() - start_time
 
 

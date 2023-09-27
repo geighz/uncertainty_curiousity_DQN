@@ -179,6 +179,7 @@ class DQN(OffPolicyAlgorithm):
             polyak_update(self.q_net.parameters(), self.q_net_target.parameters(), self.tau)
             # Copy running stats, see GH issue #996
             polyak_update(self.batch_norm_stats, self.batch_norm_stats_target, 1.0)
+            
 
         self.exploration_rate = self.exploration_schedule(self._current_progress_remaining)
         self.logger.record("rollout/exploration_rate", self.exploration_rate)
@@ -277,6 +278,9 @@ class DQN(OffPolicyAlgorithm):
         self.logger.record("train/loss_std", np.mean(losses_std))
         
         self.logger.record("train/uncertainty",th.mean(th.mean(current_q_stds_full.detach(),axis = 0)).item())
+
+        if self._n_updates %100_000:
+            self.save('DQN_{}'.format(self.env[1]))
         
         # print( np.mean(losses))
         
