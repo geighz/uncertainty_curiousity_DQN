@@ -216,7 +216,9 @@ class DQN(OffPolicyAlgorithm):
                 next_q_means,args_max_action = next_q_means.max(dim=1)
                 args_max_action = args_max_action.reshape(-1,1)
                 # next_q_means = th.gather(next_q_means,dim=0,index=max_action_idx)#next_q_means[max_action_idx]
-                next_q_stds = th.gather(next_q_stds, dim=1, index=args_max_action.long())
+                # next_q_stds = th.gather(next_q_stds, dim=1, index=args_max_action.long())
+                next_q_stds,args_max_uncertain_action  =next_q_stds.max(dim=1)
+                # next_q_stds = th.gather(next_q_stds, dim=1, index=args_max_action.long())
                
                 # Avoid potential broadcast issue
                 # next_q_values = next_q_values.reshape(-1, 1)
@@ -280,6 +282,7 @@ class DQN(OffPolicyAlgorithm):
         self.logger.record("train/uncertainty",th.mean(th.mean(current_q_stds_full.detach(),axis = 0)).item())
 
         if self._n_updates %100_000:
+            print('saved1')
             self.save('DQN_{}'.format(self.env[1]))
         
         # print( np.mean(losses))

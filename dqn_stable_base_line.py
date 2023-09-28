@@ -4,14 +4,14 @@ from stable_baselines3.common.env_util import make_vec_env
 from stable_baselines3.common.vec_env import DummyVecEnv, SubprocVecEnv
 import multiprocessing
 import time
-env_id = 'Pong-ram-v4'
-#env_id = 'CartPole-v1'
+# env_id = 'Pong-ram-v4'
+env_id = 'CartPole-v1'
 cpu_num = multiprocessing.cpu_count()
 vec_env = make_vec_env(env_id,n_envs = cpu_num)
 
 model = DQN('MlpPolicy', vec_env, verbose=0)
 
-n_timesteps = 200_000_000
+n_timesteps = 200_000
 
 # Multiprocessed RL Training
 start_time = time.time()
