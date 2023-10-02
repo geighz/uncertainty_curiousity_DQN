@@ -28,6 +28,8 @@ class QNetwork(BasePolicy):
     """
 
     action_space: spaces.Discrete
+    exploitation_mode = None
+    exploration_mode = None
 
     def __init__(
         self,
@@ -38,6 +40,8 @@ class QNetwork(BasePolicy):
         net_arch: Optional[List[int]] = None,
         activation_fn: Type[nn.Module] = nn.ReLU,
         normalize_images: bool = True,
+        
+        
     ) -> None:
         super().__init__(
             observation_space,
@@ -82,17 +86,20 @@ class QNetwork(BasePolicy):
         std_pred = nn.functional.relu(non_std)
         return mean_pred,std_pred
 
-    def _predict(self, observation: th.Tensor, deterministic: bool = True,alpha = 0.5) -> th.Tensor:
-        # ALPHA = 0.5
+    def _predict(self, observation: th.Tensor, deterministic: bool = True) -> th.Tensor:
+        ALPHA = 0.5
         q_mean,q_std = self(observation)
         # Greedy action
         # action = q_values.argmax(dim=1).reshape(-1)
-        if not self.set_training_mode:
-            action = (q_mean*(1+alpha*(q_std/(1+q_std)))).argmax(dim=1).reshape(-1) 
+        if self.exploitation_mode == "Plus":
+        #if not self.set_training_mode:
+            action = (q_mean*(1+ALPHA*(q_std/(1+q_std)))).argmax(dim=1).reshape(-1) 
+            #q_mean.argmax(dim=1).reshape(-1)#
+        elif self.exploitation_mode == "Minus":
+            action = (q_mean*(1-ALPHA*(q_std/(1+q_std)))).argmax(dim=1).reshape(-1)
             #q_mean.argmax(dim=1).reshape(-1)#
         else:
-            action = (q_mean*(1+alpha*(q_std/(1+q_std)))).argmax(dim=1).reshape(-1)
-            #q_mean.argmax(dim=1).reshape(-1)#
+            action = q_mean.argmax(dim=1).reshape(-1)
         return action
 
     def _get_constructor_parameters(self) -> Dict[str, Any]:

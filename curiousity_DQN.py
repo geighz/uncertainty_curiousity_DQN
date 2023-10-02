@@ -91,9 +91,9 @@ class DQN(OffPolicyAlgorithm):
         replay_buffer_kwargs: Optional[Dict[str, Any]] = None,
         optimize_memory_usage: bool = False,
         target_update_interval: int = 10000,
-        exploration_fraction: float = 0.01,
+        exploration_fraction: float = 0.5,
         exploration_initial_eps: float = 1.0,
-        exploration_final_eps: float = 0.3,
+        exploration_final_eps: float = 0.01,
         max_grad_norm: float = 10,
         stats_window_size: int = 100,
         tensorboard_log: Optional[str] = 'train',
@@ -192,6 +192,7 @@ class DQN(OffPolicyAlgorithm):
 
         losses_mean = []
         losses_std = []
+        gradient_steps = 1
         for _ in range(gradient_steps):
             # Sample replay buffer
             replay_data = self.replay_buffer.sample(batch_size, env=self._vec_normalize_env)  # type: ignore[union-attr]
@@ -216,9 +217,7 @@ class DQN(OffPolicyAlgorithm):
                 next_q_means,args_max_action = next_q_means.max(dim=1)
                 args_max_action = args_max_action.reshape(-1,1)
                 # next_q_means = th.gather(next_q_means,dim=0,index=max_action_idx)#next_q_means[max_action_idx]
-                # next_q_stds = th.gather(next_q_stds, dim=1, index=args_max_action.long())
-                next_q_stds,args_max_uncertain_action  =next_q_stds.max(dim=1)
-                # next_q_stds = th.gather(next_q_stds, dim=1, index=args_max_action.long())
+                next_q_stds = th.gather(next_q_stds, dim=1, index=args_max_action.long())
                
                 # Avoid potential broadcast issue
                 # next_q_values = next_q_values.reshape(-1, 1)
@@ -278,12 +277,14 @@ class DQN(OffPolicyAlgorithm):
         self.logger.record("train/n_updates", self._n_updates, exclude="tensorboard")
         self.logger.record("train/loss_mean", np.mean(losses_mean))
         self.logger.record("train/loss_std", np.mean(losses_std))
+        check = th.mean(th.mean(current_q_stds_full.detach(),axis = 0))
+        check1 = th.mean(current_q_stds.detach(),axis = 0)
         
         self.logger.record("train/uncertainty",th.mean(th.mean(current_q_stds_full.detach(),axis = 0)).item())
+        self.logger.record("train/uncertainty_single_action",th.mean(current_q_stds.detach(),axis = 0).item())
 
-        if self._n_updates %100_000:
-            print('saved1')
-            self.save('DQN_{}'.format(self.env[1]))
+        #if self._n_updates %100_000:
+        #    self.save('DQN_{}'.format(self.env[1]))
         
         # print( np.mean(losses))
         
@@ -310,18 +311,22 @@ class DQN(OffPolicyAlgorithm):
                 if isinstance(observation, dict):
                     n_batch = observation[next(iter(observation.keys()))]#.shape[0]
                 else:
-                    n_batch = observation#.shape[0]
-                #action = np.array([self.action_space.sample() for _ in range(n_batch)])
-                # print(n_batch)
-                # print(type(observation))
-                action = np.array([self.thompson_sampling(self.q_net.forward(self.policy.obs_to_tensor(obs)[0])) for obs in n_batch])
+                    n_batch = observation.shape[0]
+                #EXPLORATION SECTION BATCH
+                if self.q_net.exploration_mode == "Thompson":
+                    action = np.array([self.thompson_sampling(self.q_net.forward(self.policy.obs_to_tensor(obs)[0])) for obs in observation])
+                else:
+                    action = np.array([self.action_space.sample() for _ in range(n_batch)])
+            
             else:
-                #action = np.array(self.action_space.sample())
-                # print(observation)
-                action = np.array(self.thompson_sampling(self.q_net.forward(observation)))
+                #EXPLORATION SECTION SINGLE
+                if self.q_net.exploration_mode == "Thompson":
+                    action = np.array(self.thompson_sampling(self.q_net.forward(observation)))
+                else:
+                    action = np.array(self.action_space.sample())
         else:
             #we have to modify basepolicy
-            action, state = self.policy.predict(observation, state, episode_start, deterministic,self.exploration_rate)
+            action, state = self.policy.predict(observation, state, episode_start, deterministic)
         return action, state
     
     def thompson_sampling(self,qvals):
