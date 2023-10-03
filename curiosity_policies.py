@@ -5,7 +5,7 @@ from gymnasium import spaces
 from torch import nn
 
 from stable_baselines3.common.policies import BasePolicy
-from stable_baselines3.common.torch_layers import (
+from torch_layers_custom import (
     BaseFeaturesExtractor,
     CombinedExtractor,
     FlattenExtractor,
