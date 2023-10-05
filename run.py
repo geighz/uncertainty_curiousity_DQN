@@ -7,6 +7,7 @@ import time
 import os
 import argparse
 import datetime
+import logging
 
 def run():
     # env_id = 'Pong-ram-v4'
@@ -32,10 +33,15 @@ def run():
     vec_env = make_vec_env(env_id,n_envs = cpu_num)
     timesteps_per_save = args.num_timesteps_per_save
     TIMESTEPS = timesteps_per_save
+    iters = 0
     if args.model_path:
-        model = DQN.load(args.model_path)
-        path_variables = args.model_path[-4:].split('-')
-        iters = int(int(path_variables[2])/timesteps_per_save)
+        model = DQN.load(args.model_path,vec_env,verbose=0)
+        path_variables = args.model_path.split('/')
+        path_variables = path_variables[-1]
+        path_variables = path_variables.split('-')
+        path_variables = path_variables[-1].split('.')[0]
+        print(path_variables)
+        iters = int(int(path_variables)/timesteps_per_save)
         
     else:
         model = DQN('MlpPolicy', vec_env, verbose=0)
@@ -48,8 +54,8 @@ def run():
 
     print('Time Started:',datetime.datetime.now())
     # Multiprocessed RL Training
-   
-    iters = 0
+    
+    
     while True:
         iters += 1
         model.learn(total_timesteps=TIMESTEPS, reset_num_timesteps=False)

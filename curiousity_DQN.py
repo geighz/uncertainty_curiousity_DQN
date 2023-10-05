@@ -8,7 +8,8 @@ from torch.nn import functional as F
 
 
 from stable_baselines3.common.buffers import ReplayBuffer
-from stable_baselines3.common.off_policy_algorithm import OffPolicyAlgorithm
+#from stable_baselines3.common.off_policy_algorithm import OffPolicyAlgorithm
+from curiousity_off_policy_algorithm import OffPolicyAlgorithm
 from stable_baselines3.common.policies import BasePolicy
 from stable_baselines3.common.type_aliases import GymEnv, MaybeCallback, Schedule
 from stable_baselines3.common.utils import get_linear_fn, get_parameters_by_name, polyak_update,obs_as_tensor
@@ -283,7 +284,8 @@ class DQN(OffPolicyAlgorithm):
         self.logger.record("train/uncertainty",th.mean(th.mean(current_q_stds_full.detach(),axis = 0)).item())
         self.logger.record("train/uncertainty_single_action",th.mean(current_q_stds.detach(),axis = 0).item())
 
-        #if self._n_updates %100_000:
+        if self._n_updates %2_000_000 == 0:
+            print(self._n_updates)
         #    self.save('DQN_{}'.format(self.env[1]))
         
         # print( np.mean(losses))
@@ -326,7 +328,9 @@ class DQN(OffPolicyAlgorithm):
                     action = np.array(self.action_space.sample())
         else:
             #we have to modify basepolicy
+            
             action, state = self.policy.predict(observation, state, episode_start, deterministic)
+        
         return action, state
     
     def thompson_sampling(self,qvals):
