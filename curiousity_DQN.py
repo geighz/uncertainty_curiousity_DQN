@@ -138,7 +138,8 @@ class DQN(OffPolicyAlgorithm):
         self._n_calls = 0
         self.max_grad_norm = max_grad_norm
         # "epsilon" for the epsilon-greedy exploration
-        self.exploration_rate = 0.0
+        self.exploration_rate = 0
+        #self.exploration_rate = 1
 
         if _init_setup_model:
             self._setup_model()
