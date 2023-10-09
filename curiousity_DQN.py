@@ -317,7 +317,7 @@ class DQN(OffPolicyAlgorithm):
                     n_batch = observation.shape[0]
                 #EXPLORATION SECTION BATCH
                 if self.q_net.exploration_mode == "Thompson":
-                    action = np.array([self.thompson_sampling(self.q_net.forward(self.policy.obs_to_tensor(obs)[0])) for obs in observation])
+                    action = np.array([self.thompson_sampling(self.q_net.forward(self.policy.obs_to_tensor(obs)[0])).detach().cpu() for obs in observation])
                 else:
                     action = np.array([self.action_space.sample() for _ in range(n_batch)])
             
