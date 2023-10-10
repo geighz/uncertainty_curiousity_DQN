@@ -95,7 +95,7 @@ class DQN(OffPolicyAlgorithm):
         exploration_fraction: float = 0.5,
         exploration_initial_eps: float = 1.0,
         exploration_final_eps: float = 0.01,
-        max_grad_norm: float = 10,
+        max_grad_norm: float = 1,
         stats_window_size: int = 100,
         tensorboard_log: Optional[str] = 'train',
         policy_kwargs: Optional[Dict[str, Any]] = None,

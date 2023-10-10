@@ -51,7 +51,7 @@ def run():
         print(path_variables)
 
         iters = int(int(path_variables)/timesteps_per_save)
-        model = DQN.load(args.model_path,vec_env,verbose=1,tensorboard_log="train/"f"{args.env_id}/{args.exploration_mode}-{args.exploitation_mode}-{timesteps_per_save*iters}")
+        model = DQN.load(args.model_path,vec_env,verbose=0)
         if args.buffer_path:
             model.load_replay_buffer(args.buffer_path)
             print(f"The loaded_model has {model.replay_buffer.size()} transitions in its buffer")
@@ -60,7 +60,7 @@ def run():
         #model.exploration_initial_eps = 1
        
     else:
-        model = DQN('MlpPolicy', vec_env, verbose=1)
+        model = DQN('MlpPolicy', vec_env, verbose=0)
         model.q_net.exploration_mode = args.exploration_mode
         model.q_net.exploitation_mode = args.exploitation_mode
     
@@ -69,7 +69,7 @@ def run():
     
     while True:
         iters += 1
-        model.learn(total_timesteps=TIMESTEPS, reset_num_timesteps=True, progress_bar=True)
+        model.learn(total_timesteps=TIMESTEPS, reset_num_timesteps=True, progress_bar=True,tb_log_name=f"{args.env_id}/{args.exploration_mode}-{args.exploitation_mode}-{timesteps_per_save*iters}forever")
         model.save(f"{models_dir}/{args.env_id}/{args.exploration_mode}-{args.exploitation_mode}-{timesteps_per_save*iters}")
         model.save_replay_buffer(f"{args.buffer_dir}/{args.env_id}/{args.exploration_mode}-{args.exploitation_mode}-{timesteps_per_save*iters}")
         

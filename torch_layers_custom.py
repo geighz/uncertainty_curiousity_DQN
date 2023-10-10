@@ -141,7 +141,7 @@ def create_mlp(
         modules.append(nn.Linear(net_arch[idx], net_arch[idx + 1], bias=with_bias))
         if flag_std:
             # nn.init.uniform_(self.std.weight,a = 0.0,b = 0.35)
-            nn.init.uniform_(modules[-1].weight,a=0.0,b=0.35)
+            nn.init.uniform_(modules[-1].weight,a=0.0,b=0.05)
         modules.append(activation_fn())
 
     if output_dim > 0:
@@ -149,7 +149,7 @@ def create_mlp(
         modules.append(nn.Linear(last_layer_dim, output_dim, bias=with_bias))
         if flag_std:
             # nn.init.uniform_(self.std.weight,a = 0.0,b = 0.35)
-            nn.init.uniform_(modules[-1].weight,a=0.0,b=0.35)
+            nn.init.uniform_(modules[-1].weight,a=0.0,b=0.05)
     if squash_output:
         modules.append(nn.Tanh())
     return modules
