@@ -9,6 +9,7 @@ import os
 import argparse
 import datetime
 import logging
+import gymnasium
 
 def run():
     # env_id = 'Pong-ram-v4'
@@ -38,25 +39,26 @@ def run():
   
     env_id = args.env_id
     cpu_num = multiprocessing.cpu_count()
-    vec_env = make_vec_env(env_id,n_envs = cpu_num)
+    vec_env = make_vec_env(env_id,n_envs = cpu_num)#,wrapper_class=gymnasium.wrappers.Monitor,wrapper_kwargs={"/path/to/folder/", force=True})
     eval_env = make_vec_env(env_id, n_envs=cpu_num)
     timesteps_per_save = args.num_timesteps_per_save
     TIMESTEPS = timesteps_per_save
     iters = 0
     if args.model_path:
-        #Load model
-        model = DQN.load(args.model_path,vec_env,verbose=0)
+        #Load model  
         path_variables = args.model_path.split('/')
         path_variables = path_variables[-1].split('-')[-1].split('.')[0]
-        
         print(path_variables)
+
         iters = int(int(path_variables)/timesteps_per_save)
+        model = DQN.load(args.model_path,vec_env,verbose=1,tensorboard_log="train/"f"{args.env_id}/{args.exploration_mode}-{args.exploitation_mode}-{timesteps_per_save*iters}")
         if args.buffer_path:
             model.load_replay_buffer(args.buffer_path)
             print(f"The loaded_model has {model.replay_buffer.size()} transitions in its buffer")
         else:
             print('Warning! Replay buffer not initialized.')
         #model.exploration_initial_eps = 1
+       
     else:
         model = DQN('MlpPolicy', vec_env, verbose=1)
         model.q_net.exploration_mode = args.exploration_mode

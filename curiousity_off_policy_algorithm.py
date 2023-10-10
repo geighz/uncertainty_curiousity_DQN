@@ -10,7 +10,8 @@ import numpy as np
 import torch as th
 from gymnasium import spaces
 
-from stable_baselines3.common.base_class import BaseAlgorithm
+#from stable_baselines3.common.base_class import BaseAlgorithm
+from curiousity_base_class import BaseAlgorithm
 from stable_baselines3.common.buffers import DictReplayBuffer, ReplayBuffer
 from stable_baselines3.common.callbacks import BaseCallback
 from stable_baselines3.common.noise import ActionNoise, VectorizedActionNoise
