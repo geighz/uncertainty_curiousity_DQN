@@ -12,6 +12,13 @@ from torch_layers_custom import (
     NatureCNN,
     create_mlp,
 )
+# from stable_baselines3.common.torch_layers import (
+#     BaseFeaturesExtractor,
+#     CombinedExtractor,
+#     FlattenExtractor,
+#     NatureCNN,
+#     create_mlp,
+# )
 from stable_baselines3.common.type_aliases import Schedule
 
 
@@ -51,7 +58,7 @@ class QNetwork(BasePolicy):
         )
 
         if net_arch is None:
-            net_arch = [512,256]
+            net_arch = [64,64]
 
         self.net_arch = net_arch
         self.activation_fn = activation_fn
@@ -59,8 +66,8 @@ class QNetwork(BasePolicy):
         action_dim = int(self.action_space.n)  # number of actions
         last_layer = self.net_arch[-1]
         
-        neck_arch =  [last_layer//2,last_layer//2]
-        self.net_arch = self.net_arch[:-1]
+        neck_arch =  [512]
+        # self.net_arch = self.net_arch[:-1]
         # q_net = create_mlp(self.features_dim, action_dim, self.net_arch, self.activation_fn)
         # create_mlp(in,out,architecture,act_fn)
         q_net_body = create_mlp(self.features_dim, last_layer, self.net_arch, self.activation_fn)

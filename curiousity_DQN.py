@@ -13,7 +13,8 @@ from curiousity_off_policy_algorithm import OffPolicyAlgorithm
 from stable_baselines3.common.policies import BasePolicy
 from stable_baselines3.common.type_aliases import GymEnv, MaybeCallback, Schedule
 from stable_baselines3.common.utils import get_linear_fn, get_parameters_by_name, polyak_update,obs_as_tensor
-# from stable_baselines3.dqn.policies import CnnPolicy, DQNPolicy, MlpPolicy, MultiInputPolicy, QNetwork
+#from stable_baselines3.dqn.policies import CnnPolicy, DQNPolicy, MlpPolicy, MultiInputPolicy, QNetwork
+
 from curiosity_policies import CnnPolicy, DQNPolicy, MlpPolicy, MultiInputPolicy, QNetwork
 
 SelfDQN = TypeVar("SelfDQN", bound="DQN")
@@ -92,7 +93,7 @@ class DQN(OffPolicyAlgorithm):
         replay_buffer_kwargs: Optional[Dict[str, Any]] = None,
         optimize_memory_usage: bool = False,
         target_update_interval: int = 10000,
-        exploration_fraction: float = 0.5,
+        exploration_fraction: float = 0.85,
         exploration_initial_eps: float = 1.0,
         exploration_final_eps: float = 0.01,
         max_grad_norm: float = 1,
