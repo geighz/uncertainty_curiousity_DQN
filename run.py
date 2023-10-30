@@ -60,7 +60,7 @@ def run():
         #model.exploration_initial_eps = 1
        
     else:
-        model = DQN('MlpPolicy', vec_env, verbose=0)
+        model = DQN('CnnPolicy', vec_env, verbose=0)
         model.q_net.exploration_mode = args.exploration_mode
         model.q_net.exploitation_mode = args.exploitation_mode
     
