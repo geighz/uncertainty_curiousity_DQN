@@ -101,6 +101,7 @@ class DQN(OffPolicyAlgorithm):
         tensorboard_log: Optional[str] = 'train',
         policy_kwargs: Optional[Dict[str, Any]] = None,
         verbose: int = 0,
+        reward_norm: int = 1,
         seed: Optional[int] = None,
         device: Union[th.device, str] = "auto",
         _init_setup_model: bool = True,
@@ -138,6 +139,7 @@ class DQN(OffPolicyAlgorithm):
         # For updating the target network with multiple envs:
         self._n_calls = 0
         self.max_grad_norm = max_grad_norm
+        self.reward_norm = reward_norm
         # "epsilon" for the epsilon-greedy exploration
         self.exploration_rate = 0
         #self.exploration_rate = 1
@@ -230,7 +232,7 @@ class DQN(OffPolicyAlgorithm):
 
                 # 1-step TD target
                 # target_q_values = replay_data.rewards + (1 - replay_data.dones) * self.gamma * next_q_values
-                target_q_means = replay_data.rewards/3000 + (1 - replay_data.dones) * self.gamma * next_q_means
+                target_q_means = replay_data.rewards/self.reward_norm + (1 - replay_data.dones) * self.gamma * next_q_means
 
                 target_q_stds = th.abs(old_q_means - target_q_means) + (1 - replay_data.dones) * self.gamma**(2) * next_q_stds
 

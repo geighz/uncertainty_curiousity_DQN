@@ -39,6 +39,7 @@ def run():
     parser.add_argument('--exploration_initial_eps',type=float,default=.01)
     parser.add_argument('--exploration_final_eps',type=float,default=.2)
     parser.add_argument('--max_grad_norm',type=float,default=.5)
+    parser.add_argument('--reward_norm',type=int,default=1)
 
 
     args = parser.parse_args()
@@ -75,7 +76,8 @@ def run():
                     exploration_fraction=args.exploration_fraction,
                     exploration_initial_eps=args.exploration_initial_eps,
                     exploration_final_eps=args.exploration_final_eps,
-                    max_grad_norm=args.max_grad_norm
+                    max_grad_norm=args.max_grad_norm,
+                    reward_norm=args.reward_norm
                     )
         model.q_net.exploration_mode = args.exploration_mode
         model.q_net.exploitation_mode = args.exploitation_mode
