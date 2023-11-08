@@ -93,10 +93,10 @@ class DQN(OffPolicyAlgorithm):
         replay_buffer_kwargs: Optional[Dict[str, Any]] = None,
         optimize_memory_usage: bool = False,
         target_update_interval: int = 10000,
-        exploration_fraction: float = 0.85,
-        exploration_initial_eps: float = 1.0,
-        exploration_final_eps: float = 0.01,
-        max_grad_norm: float = 1,
+        exploration_fraction: float = 0.8,
+        exploration_initial_eps: float = 0.01   ,
+        exploration_final_eps: float = 0.2,
+        max_grad_norm: float = .1,
         stats_window_size: int = 100,
         tensorboard_log: Optional[str] = 'train',
         policy_kwargs: Optional[Dict[str, Any]] = None,
@@ -230,9 +230,9 @@ class DQN(OffPolicyAlgorithm):
 
                 # 1-step TD target
                 # target_q_values = replay_data.rewards + (1 - replay_data.dones) * self.gamma * next_q_values
-                target_q_means = replay_data.rewards + (1 - replay_data.dones) * self.gamma * next_q_means
+                target_q_means = replay_data.rewards/3000 + (1 - replay_data.dones) * self.gamma * next_q_means
 
-                target_q_stds = th.abs(old_q_means - target_q_means) + (1 - replay_data.dones) * self.gamma**(0.5) * next_q_stds
+                target_q_stds = th.abs(old_q_means - target_q_means) + (1 - replay_data.dones) * self.gamma**(2) * next_q_stds
 
             # Get current Q-values estimates
             

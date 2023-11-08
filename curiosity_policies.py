@@ -58,7 +58,7 @@ class QNetwork(BasePolicy):
         )
 
         if net_arch is None:
-            net_arch = [64,64]
+            net_arch = [64]
 
         self.net_arch = net_arch
         self.activation_fn = activation_fn
@@ -66,7 +66,7 @@ class QNetwork(BasePolicy):
         action_dim = int(self.action_space.n)  # number of actions
         last_layer = self.net_arch[-1]
         
-        neck_arch =  [512]
+        neck_arch =  [128]
         # self.net_arch = self.net_arch[:-1]
         # q_net = create_mlp(self.features_dim, action_dim, self.net_arch, self.activation_fn)
         # create_mlp(in,out,architecture,act_fn)

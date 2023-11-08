@@ -133,10 +133,11 @@ def create_mlp(
     """
 
     if len(net_arch) > 0:
-        modules = [nn.Linear(input_dim, net_arch[0], bias=with_bias), activation_fn()]
+        modules = [nn.Linear(input_dim, net_arch[0], bias=with_bias)]
         if flag_std:
             # nn.init.uniform_(self.std.weight,a = 0.0,b = 0.35)
             nn.init.uniform_(modules[-1].weight,a=0.0,b=0.05)
+        modules.append(activation_fn())
     else:
         modules = []
 

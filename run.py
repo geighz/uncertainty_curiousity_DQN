@@ -11,6 +11,8 @@ import datetime
 import logging
 import gymnasium
 
+#python -u run.py  --env_id CartPole-v1  --exploitation_mode Plus --num_timesteps_per_save 2_500_000 --buffer_dir /home/eilab/Documents/Geigh/Uncertainty_MARL/Stand_Alone_Agents/stable_baseline/buffers
+
 def run():
     # env_id = 'Pong-ram-v4'
     # env_id = 'CartPole-v1'
@@ -60,7 +62,7 @@ def run():
         #model.exploration_initial_eps = 1
        
     else:
-        model = DQN('CnnPolicy', vec_env, verbose=0)
+        model = DQN('MlpPolicy', vec_env, verbose=0)
         model.q_net.exploration_mode = args.exploration_mode
         model.q_net.exploitation_mode = args.exploitation_mode
     
