@@ -84,7 +84,7 @@ class DQN(OffPolicyAlgorithm):
         learning_rate: Union[float, Schedule] = 1e-4,
         buffer_size: int = 1_000_000,  # 1e6
         learning_starts: int = 50000,
-        batch_size: int = 64,
+        batch_size: int = 1024,
         tau: float = 1.0,
         gamma: float = 0.99,
         train_freq: Union[int, Tuple[int, str]] = 4,

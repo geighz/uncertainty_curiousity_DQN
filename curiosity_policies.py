@@ -177,7 +177,7 @@ class DQNPolicy(BasePolicy):
 
         self.net_arch = net_arch
         self.activation_fn = activation_fn
-
+        
         self.net_args = {
             "observation_space": self.observation_space,
             "action_space": self.action_space,
