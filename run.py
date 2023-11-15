@@ -38,6 +38,7 @@ def run():
     parser.add_argument('--reward_norm',type=int,default=1)
     parser.add_argument('--weight_decay',type=float,default=1e-5)
     parser.add_argument('--batch_size',type=int,default=512)
+    parser.add_argument('--experiment_title',type=str)
 
 
     args = parser.parse_args()
@@ -90,7 +91,7 @@ def run():
     while True:
         iters += 1
         model.learn(total_timesteps=TIMESTEPS, reset_num_timesteps=True, progress_bar=True,tb_log_name=f"{args.env_id}/{args.exploration_mode}-{args.exploitation_mode}-{timesteps_per_save*iters}-120Hrs")
-        model.save(f"{models_dir}/{args.env_id}/{args.exploration_mode}-{args.exploitation_mode}-{timesteps_per_save*iters}")
+        model.save(f"{models_dir}/{args.env_id}/{args.exploration_mode}-{args.exploitation_mode}-{timesteps_per_save*iters}-{args.experiment_title}")
         model.save_replay_buffer(f"{args.buffer_dir}/{args.env_id}/{args.exploration_mode}-{args.exploitation_mode}-{timesteps_per_save*iters}")
         
         # Evaluate the loaded policy
