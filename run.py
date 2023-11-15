@@ -90,7 +90,7 @@ def run():
     
     while True:
         iters += 1
-        model.learn(total_timesteps=TIMESTEPS, reset_num_timesteps=True, progress_bar=True,tb_log_name=f"{args.env_id}/{args.exploration_mode}-{args.exploitation_mode}-{timesteps_per_save*iters}-120Hrs")
+        model.learn(total_timesteps=TIMESTEPS, reset_num_timesteps=True, progress_bar=True,tb_log_name=f"{args.env_id}/{args.exploration_mode}-{args.exploitation_mode}-{timesteps_per_save*iters}-{args.experiment_title}-TIME:120Hrs")
         model.save(f"{models_dir}/{args.env_id}/{args.exploration_mode}-{args.exploitation_mode}-{timesteps_per_save*iters}-{args.experiment_title}")
         model.save_replay_buffer(f"{args.buffer_dir}/{args.env_id}/{args.exploration_mode}-{args.exploitation_mode}-{timesteps_per_save*iters}")
         
