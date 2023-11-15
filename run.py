@@ -31,16 +31,13 @@ def run():
     parser.add_argument('--env_id', type=str, default='ALE/Breakout-ram-v5')
     parser.add_argument('--exploration_mode',type=str, default='Thompson')
     parser.add_argument('--exploitation_mode', type=str, default='Normal')
-    # exploration_fraction: fraction of entire training period over which the exploration rate is reduced
-    # :param exploration_initial_eps: initial value of random action probability
-    # :param exploration_final_eps: final value of random action probability
-    # :param max_grad_norm
     parser.add_argument('--exploration_fraction',type=float,default=.8)
     parser.add_argument('--exploration_initial_eps',type=float,default=.01)
     parser.add_argument('--exploration_final_eps',type=float,default=.2)
     parser.add_argument('--max_grad_norm',type=float,default=.5)
     parser.add_argument('--reward_norm',type=int,default=1)
     parser.add_argument('--weight_decay',type=float,default=1e-5)
+    parser.add_argument('--batch_size',type=int,default=512)
 
 
     args = parser.parse_args()
@@ -81,7 +78,8 @@ def run():
                     exploration_final_eps=args.exploration_final_eps,
                     max_grad_norm=args.max_grad_norm,
                     reward_norm=args.reward_norm,
-                    policy_kwargs=policy_kwargs
+                    policy_kwargs=policy_kwargs,
+                    batch_size=args.batch_size
                     )
         model.q_net.exploration_mode = args.exploration_mode
         model.q_net.exploitation_mode = args.exploitation_mode
